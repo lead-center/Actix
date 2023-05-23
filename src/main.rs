@@ -5,22 +5,6 @@ use actix_web::rt::net::UnixListener;
 #[cfg(windows)]
 use actix_web::rt::net::TcpListener;
 
-#[get("/")]
-#[cfg(not(windows))]
-async fn index() -> Result<HttpResponse> {
-    Ok(HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(include_str!("../wasm/dist/index.html")))
-}
-
-#[get("/")]
-#[cfg(windows)]
-async fn index() -> Result<HttpResponse> {
-    dbg!("index hit");
-    Ok(HttpResponse::Ok()
-        .content_type("text/html; charset=utf-8")
-        .body(include_str!("E:/dev/lead_center/signatorytraining/dist/index.html")))
-}
 
 #[cfg(not(windows))]
 #[actix_web::main]
@@ -70,7 +54,7 @@ async fn main() -> std::io::Result<()> {
         .service(actix_web::web::scope("/signatorytraining").service(Files::new("/", "E:/dev/lead_center/signatorytraining/dist/index.html").index_file("index.html")))
         .service(article)
         .service(Files::new("articles", "articles").index_file("index.html"))
-        .service(Files::new("/", "E:/dev/lead_center/signatorytraining/dist").index_file("index.html"))
+        .service(Files::new("/", "../signatorytraining/dist").index_file("index.html"))
     });
 
     let address = ("127.0.0.1", 8081);
