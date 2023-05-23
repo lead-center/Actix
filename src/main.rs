@@ -51,7 +51,7 @@ async fn article(path: web::Path<String>) -> Result<HttpResponse> {
 async fn main() -> std::io::Result<()> {
     let mut server = HttpServer::new(|| {
         App::new()
-        .service(actix_web::web::scope("/signatorytraining").service(Files::new("/", "E:/dev/lead_center/signatorytraining/dist/index.html").index_file("index.html")))
+        .service(actix_web::web::scope("/signatorytraining").service(Files::new("/", "../signatorytraining/dist/index.html").index_file("index.html")))
         .service(article)
         .service(Files::new("articles", "articles").index_file("index.html"))
         .service(Files::new("/", "../signatorytraining/dist").index_file("index.html"))
