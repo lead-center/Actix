@@ -1,12 +1,12 @@
 use actix_files::Files;
 use actix_web::{App, HttpResponse, HttpServer, HttpRequest, Result, get, web};
-#[cfg(not(windows))]
+#[cfg(linux)]
 use actix_web::rt::net::UnixListener;
-#[cfg(windows)]
+#[cfg(not(linux))]
 use actix_web::rt::net::TcpListener;
 
 
-#[cfg(not(windows))]
+#[cfg(linux)]
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
@@ -46,15 +46,15 @@ async fn article(path: web::Path<String>) -> Result<HttpResponse> {
         .body(md))
 }
 
-#[cfg(windows)]
+#[cfg(not(linux))]
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let mut server = HttpServer::new(|| {
         App::new()
-        .service(actix_web::web::scope("/signatorytraining").service(Files::new("/", "../signatorytraining/dist/index.html").index_file("index.html")))
-        .service(article)
-        .service(Files::new("articles", "articles").index_file("index.html"))
-        .service(Files::new("/", "../signatorytraining/dist").index_file("index.html"))
+            .service(actix_web::web::scope("/signatorytraining").service(Files::new("/", "../signatorytraining/dist/index.html").index_file("index.html")))
+            .service(article)
+            .service(Files::new("articles", "articles").index_file("index.html"))
+            .service(Files::new("/", "../signatorytraining/dist").index_file("index.html"))
     });
 
     let address = ("127.0.0.1", 8081);
