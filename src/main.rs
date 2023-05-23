@@ -58,7 +58,7 @@ async fn main() -> std::io::Result<()> {
     });
 
     let address = ("127.0.0.1", 8081);
-    println!("Server started - listening on {}:{}", address.0, address.1);
+    println!("Server started - listening on http://{}:{}", address.0, address.1);
     server.bind(address)?.run().await
     
 }
