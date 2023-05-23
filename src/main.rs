@@ -1,5 +1,5 @@
 use actix_files::Files;
-use actix_web::{App, HttpResponse, HttpServer, Result, get, web};
+use actix_web::{App, HttpResponse, HttpServer, HttpRequest, Result, get, web};
 #[cfg(not(windows))]
 use actix_web::rt::net::UnixListener;
 #[cfg(windows)]
@@ -25,24 +25,26 @@ async fn index() -> Result<HttpResponse> {
 #[cfg(not(windows))]
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let mut server = HttpServer::new(|| {
-        App::new()
-            .service(Files::new("/", "../wasm/dist/index.html").index_file("index.html"))
-    });
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
-    
-
-    let socket = std::env::var("SOCK");
-
-    let server = if let Ok(socket) = socket {
-        let listener = UnixListener::bind(socket).unwrap();
-        listener
-    } else {
-        server = server.bind(("127.0.0.1", 8080))?;
-        server
+    match std::env::var("SOCK") {
+        Ok(s) => {
+            dbg!(&s);
+            HttpServer::new(|| {
+                App::new()
+                    .service(Files::new("/", "/home/l/le/lead/wasm/dist").index_file("index.html"))
+            })
+            .bind_uds(s)?
+            .workers(1)
+            .run()
+            .await;
+        },
+        Err(e) => {
+            dbg!(e);
+        }
     };
 
-    server.run().await
+    Ok(())
 }
 
 #[get("/article/{article_name}")]
